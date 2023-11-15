@@ -6,15 +6,21 @@
 //
 
 import SwiftUI
+import Firebase
+import FirebaseFirestore
 
 @main
-struct TeamxApp: App {
-    let persistenceController = PersistenceController.shared
-
+struct TeamX: App {
+    let fireDBHelper : FireDBHelper
+    
+    init() {
+        FirebaseApp.configure()
+        fireDBHelper = FireDBHelper.getInstance()
+    }
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+            ContentView().environmentObject(fireDBHelper)
         }
     }
 }
