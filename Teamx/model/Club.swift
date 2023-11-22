@@ -13,14 +13,19 @@ struct Club: Codable, Hashable {
     var code: String = generateUniqueCode()
     var teams: [Team] = []
     var players: [Player] = []
+    var creationDate: Date?
 
     init() {
         self.name = "NA"
+        self.creationDate = Date() // Set the creation date when initializing a club
+
     }
 
     init(name: String) {
         self.name = name
         self.code = Club.generateUniqueCode()
+        self.creationDate = Date()
+
     }
     
     init?(dictionary: [String: Any]) {

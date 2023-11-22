@@ -21,7 +21,10 @@ class FireDBHelper : ObservableObject{
     
     private let COLLECTION_NAME = "Clubs"
     private let ATTRIBUTE_NAME = "clubname"
-    private let ATTRIBUTE_CODE = "code" 
+    private let ATTRIBUTE_DATE = "date"
+    private let ATTRIBUTE_CODE = "code"
+    private let COACHES_COLLECTION = "Coaches"
+    private let PLAYERS_COLLECTION = "Players"
 
     
     private init(database : Firestore){
@@ -37,6 +40,24 @@ class FireDBHelper : ObservableObject{
         return self.shared!
     }
     
+    func insertCoach(coach: Coach) {
+            do {
+                try self.db.collection(COACHES_COLLECTION).addDocument(from: coach)
+            } catch let err as NSError {
+                print("Unable to insert coach: \(err)")
+            }
+        }
+    
+    
+    func insertPlayer(player: Player) {
+            do {
+                try self.db.collection(PLAYERS_COLLECTION).addDocument(from: player)
+            } catch let err as NSError {
+                print("Unable to insert player: \(err)")
+            }
+        }
+
+    
     func insertClub(stud : Club){
             do{
                 // Generate a unique code for the club
@@ -46,8 +67,12 @@ class FireDBHelper : ObservableObject{
                 var clubWithCode = stud
                 clubWithCode.code = uniqueCode
                 
+                let currentDate = Date()
+                var clubWithCreationDate = clubWithCode
+                clubWithCreationDate.creationDate = currentDate
+                
                 // Insert the club into the database
-                try self.db.collection(COLLECTION_NAME).addDocument(from: clubWithCode)
+                try self.db.collection(COLLECTION_NAME).addDocument(from: clubWithCreationDate)
                 
             }catch let err as NSError{
                 print(#function, "Unable to insert : \(err)")
@@ -87,7 +112,8 @@ class FireDBHelper : ObservableObject{
                         
                         do{
                             //obtain the document as Student class object
-                            let stud = try docChange.document.data(as: Club.self)
+                            var stud = try docChange.document.data(as: Club.self)
+                            stud.creationDate = docChange.document.data()[self.ATTRIBUTE_DATE] as? Date
                             
                             print(#function, "stud from db : id : \(stud.id) clubname : \(stud.name)")
                             
@@ -139,10 +165,12 @@ class FireDBHelper : ObservableObject{
     
     func updateClub( updatedClubIndex : Int ){
         
+        let currentDate = Date()
         self.db
             .collection(COLLECTION_NAME)
             .document(self.clubList[updatedClubIndex].id!)
             .updateData([ATTRIBUTE_NAME : self.clubList[updatedClubIndex].name,
+                         ATTRIBUTE_DATE: currentDate
                         ]){ error in
                 
                 if let err = error{
