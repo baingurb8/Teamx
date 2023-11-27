@@ -12,6 +12,10 @@ enum Position: String, Codable {
     case midfielder
     case defender
     case goalie
+    
+    static var allCases: [Position] {
+            return [.attacker, .midfielder, .defender, .goalie]
+        }
 }
 
 struct Player: Codable, Hashable {

@@ -9,9 +9,9 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         NavigationView {
-            HStack {
-                NavigationLink(destination: MakeAClubView()) {
-                    Text("Make a Club")
+            VStack {
+                NavigationLink(destination: MakeAPlayerView()) {
+                    Text("Create a Player")
                         .padding()
                         .foregroundColor(.white)
                         .background(Color.blue)
@@ -19,11 +19,20 @@ struct ContentView: View {
                 }
                 .padding()
 
-                NavigationLink(destination: JoinClubView()) {
-                    Text("Join a Club")
+                NavigationLink(destination: CreateACoachView()) {
+                    Text("Create a Coach")
                         .padding()
                         .foregroundColor(.white)
                         .background(Color.green)
+                        .cornerRadius(10)
+                }
+                .padding()
+
+                NavigationLink(destination: LoginView()) {
+                    Text("Login")
+                        .padding()
+                        .foregroundColor(.white)
+                        .background(Color.orange)
                         .cornerRadius(10)
                 }
                 .padding()
