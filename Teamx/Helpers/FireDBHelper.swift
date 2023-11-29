@@ -11,6 +11,8 @@ import FirebaseFirestore
 class FireDBHelper : ObservableObject{
     
     @Published var clubList = [Club]()
+    @Published var teamList = [Team]()
+
     
     private let db : Firestore
     
@@ -20,6 +22,7 @@ class FireDBHelper : ObservableObject{
     private static var shared : FireDBHelper?
     
     private let COLLECTION_NAME = "Clubs"
+    private let TEAMS_COLLECTION = "Teams"
     private let ATTRIBUTE_NAME = "clubname"
     private let ATTRIBUTE_DATE = "date"
     private let ATTRIBUTE_CODE = "code"
@@ -40,6 +43,44 @@ class FireDBHelper : ObservableObject{
         return self.shared!
     }
     
+    func retrieveUserDetails(for uid: String, completion: @escaping (Result<[String: Any]?, Error>) -> Void) {
+        self.db.collection(COACHES_COLLECTION).whereField("uid", isEqualTo: uid).getDocuments { snapshot, error in
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+
+            if let documents = snapshot?.documents, !documents.isEmpty {
+                if let coachDetails = documents.first?.data() {
+                    completion(.success(coachDetails))
+                } else {
+                    completion(.success(nil))
+                }
+            } else {
+                self.db.collection(self.PLAYERS_COLLECTION).whereField("uid", isEqualTo: uid).getDocuments { snapshot, error in
+                    if let error = error {
+                        completion(.failure(error))
+                        return
+                    }
+
+                    if let documents = snapshot?.documents, !documents.isEmpty {
+                        if let playerDetails = documents.first?.data() {
+                            completion(.success(playerDetails))
+                        } else {
+                            completion(.success(nil))
+                        }
+                    } else {
+                        completion(.success(nil))
+                    }
+                }
+            }
+        }
+    }
+
+
+
+
+    
     func insertCoach(coach: Coach) {
             do {
                 try self.db.collection(COACHES_COLLECTION).addDocument(from: coach)
@@ -56,6 +97,33 @@ class FireDBHelper : ObservableObject{
                 print("Unable to insert player: \(err)")
             }
         }
+    
+    func insertTeam(team: Team) {
+            do {
+                try self.db.collection(TEAMS_COLLECTION).addDocument(from: team)
+            } catch let err as NSError {
+                print("Unable to insert team: \(err)")
+            }
+        }
+    
+    func retrieveAllTeams() {
+        db.collection(TEAMS_COLLECTION).order(by: "name", descending: false).addSnapshotListener { snapshot, error in
+            guard let snapshot = snapshot else {
+                print("Unable to retrieve teams: \(error?.localizedDescription ?? "Unknown error")")
+                return
+            }
+            
+            self.teamList = snapshot.documents.compactMap { document in
+                do {
+                    return try document.data(as: Team.self)
+                } catch {
+                    print("Error decoding team: \(error.localizedDescription)")
+                    return nil
+                }
+            }
+        }
+    }
+
 
     
     func insertClub(stud : Club){
@@ -63,7 +131,6 @@ class FireDBHelper : ObservableObject{
                 // Generate a unique code for the club
                 let uniqueCode = Club.generateUniqueCode()
                 
-                // Add the generated code to the club object
                 var clubWithCode = stud
                 clubWithCode.code = uniqueCode
                 

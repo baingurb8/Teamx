@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		436E7E722B17C16900371B9E /* CoachView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 436E7E712B17C16900371B9E /* CoachView.swift */; };
 		43C24FFC2B0DDFAB00C3139E /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 43C24FFB2B0DDFAB00C3139E /* FirebaseAnalytics */; };
 		43C24FFE2B0DDFAB00C3139E /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 43C24FFD2B0DDFAB00C3139E /* FirebaseAuth */; };
 		43C250002B0DDFAB00C3139E /* FirebaseAuthCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 43C24FFF2B0DDFAB00C3139E /* FirebaseAuthCombine-Community */; };
@@ -53,6 +54,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		436E7E712B17C16900371B9E /* CoachView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoachView.swift; sourceTree = "<group>"; };
 		43C250212B0DE14200C3139E /* MakeAPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakeAPlayerView.swift; sourceTree = "<group>"; };
 		43C250232B0DE15C00C3139E /* CreateACoachView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateACoachView.swift; sourceTree = "<group>"; };
 		43C250252B0DE17E00C3139E /* CreatePracticeSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatePracticeSession.swift; sourceTree = "<group>"; };
@@ -187,6 +189,7 @@
 				43C2502D2B0DE1F400C3139E /* ProfileView.swift */,
 				43C2502F2B0DE20300C3139E /* PracticeView.swift */,
 				43C250332B0DF48500C3139E /* LoginView.swift */,
+				436E7E712B17C16900371B9E /* CoachView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -301,6 +304,7 @@
 				43D82D212B051CF30032E0CA /* FireDBHelper.swift in Sources */,
 				43C250262B0DE17E00C3139E /* CreatePracticeSession.swift in Sources */,
 				43D82CE32B0515E40032E0CA /* Team.swift in Sources */,
+				436E7E722B17C16900371B9E /* CoachView.swift in Sources */,
 				43C250242B0DE15C00C3139E /* CreateACoachView.swift in Sources */,
 				43D82CDD2B0515BA0032E0CA /* Player.swift in Sources */,
 				43D82CDF2B0515C90032E0CA /* Coach.swift in Sources */,

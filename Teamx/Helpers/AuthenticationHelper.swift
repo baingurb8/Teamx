@@ -10,15 +10,32 @@ import FirebaseAuth
 import FirebaseFirestore
 
 class AuthenticationHelper: ObservableObject{
-    func registerUser(email: String, password: String, completion: @escaping (Error?) -> Void) {
-        Auth.auth().createUser(withEmail: email, password: password) { _, error in
-            completion(error)
+    
+    
+    func registerUser(email: String, password: String, completion: @escaping (Result<String, Error>) -> Void) {
+        Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
+            if let error = error {
+                completion(.failure(error))
+            } else if let user = authResult?.user {
+                completion(.success(user.uid))
+            } else {
+                let unknownError = NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Unknown error"])
+                completion(.failure(unknownError))
+            }
         }
     }
 
-    func loginUser(email: String, password: String, completion: @escaping (Error?) -> Void) {
-        Auth.auth().signIn(withEmail: email, password: password) { _, error in
-            completion(error)
+
+    func loginUser(email: String, password: String, completion: @escaping (Result<String, Error>) -> Void) {
+        Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
+            if let error = error {
+                completion(.failure(error))
+            } else if let user = authResult?.user {
+                completion(.success(user.uid)) // Return the user's UID as String
+            } else {
+                let customError = NSError(domain: "", code: 404, userInfo: [NSLocalizedDescriptionKey: "Unknown error"])
+                completion(.failure(customError))
+            }
         }
     }
 

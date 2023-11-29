@@ -11,7 +11,7 @@ struct CreateACoachView: View {
     @EnvironmentObject var dbHelper: FireDBHelper
     @Environment(\.dismiss) var dismiss
     
-    @StateObject var authManager = AuthenticationHelper() // Add an instance of AuthenticationManager
+    @StateObject var authManager = AuthenticationHelper()
     
     
     @State private var firstName = ""
@@ -46,17 +46,18 @@ struct CreateACoachView: View {
     }
     private func addCoach() {
         let newCoach = Coach(firstName: firstName, lastName: lastName)
-        dbHelper.insertCoach(coach: newCoach)
         
-        authManager.registerUser(email: email, password: password) { error in
-            if let error = error {
+        authManager.registerUser(email: email, password: password) { result in
+            switch result {
+            case .success(let userID):
+                var coachWithID = newCoach
+                coachWithID.uid = userID
+                dbHelper.insertCoach(coach: coachWithID)
+                dismiss()
+            case .failure(let error):
                 print("Error registering coach: \(error.localizedDescription)")
                 // Handle error if needed
-            } else {
-                print("Coach registered successfully")
-                dismiss()
             }
         }
-        
     }
 }

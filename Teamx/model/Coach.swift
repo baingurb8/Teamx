@@ -13,6 +13,8 @@ struct Coach: Codable, Hashable {
     @DocumentID var id: String? = UUID().uuidString
     var firstName: String = ""
     var lastName: String = ""
+    var role: String = ""
+    var uid: String = "" 
     var teams: [Team] = []
 
     init() {
@@ -20,8 +22,9 @@ struct Coach: Codable, Hashable {
         self.lastName = "NA"
     }
 
-    init(firstName: String, lastName: String) {
+    init(firstName: String, lastName: String, role: String = "coach") {
         self.firstName = firstName
         self.lastName = lastName
+        self.role = role
     }
 }

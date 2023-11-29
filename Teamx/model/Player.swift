@@ -24,13 +24,17 @@ struct Player: Codable, Hashable {
     var lastName: String
     var birthday: Date
     var position: Position
+    var role: String
+    var uid: String = ""
     var clubs: [Club]
     var teams: [Team]
 
-    init(firstName: String = "", lastName: String = "", position: Position = .attacker, birthday: Date = Date(), clubs: [Club] = [], teams: [Team] = []) {
+    init(firstName: String = "", lastName: String = "", position: Position = .attacker, role: String = "player", uid: String = "", birthday: Date = Date(), clubs: [Club] = [], teams: [Team] = []) {
         self.firstName = firstName
         self.lastName = lastName
         self.position = position
+        self.role = role
+        self.uid = uid
         self.birthday = birthday
         self.clubs = clubs
         self.teams = teams

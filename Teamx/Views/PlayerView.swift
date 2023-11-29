@@ -8,13 +8,22 @@
 import SwiftUI
 
 struct PlayerView: View {
+    let userDetails: [String: Any]
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack {
+            Text("Welcome Player")
+                .font(.title)
+                .padding()
+            
+          
+            Text("Player Name: \(userDetails["firstName"] as? String ?? "")")
+                .padding()
+        }
     }
 }
-
 struct PlayerView_Previews: PreviewProvider {
     static var previews: some View {
-        PlayerView()
+        PlayerView(userDetails: [:])
     }
 }
