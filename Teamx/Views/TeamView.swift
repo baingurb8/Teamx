@@ -8,8 +8,31 @@
 import SwiftUI
 
 struct TeamView: View {
+    
+    @EnvironmentObject var dbHelper: FireDBHelper
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        
+        VStack{
+            ForEach(self.dbHelper.teamList.enumerated().map({$0}), id: \.element.self){
+              index, list in
+                List{
+                    VStack{
+                        Text("Team:")
+                            .foregroundColor(.blue)
+                            .font(.callout)
+                        Text("Player Name:)")
+                            .font(.callout)
+                    }
+                }//List
+            }//ForEach
+        }//VStack
+        .onAppear(){
+            
+            self.dbHelper.retrieveAllTeams()
+        }
+        .navigationTitle("Clubs")
+        .navigationBarTitleDisplayMode(.inline)
+        
     }
 }
 

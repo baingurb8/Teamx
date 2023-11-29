@@ -8,6 +8,7 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
+        
         NavigationView {
             VStack {
                 NavigationLink(destination: MakeAPlayerView()) {
@@ -36,8 +37,12 @@ struct ContentView: View {
                         .cornerRadius(10)
                 }
                 .padding()
+                .foregroundColor(.cyan)
+                .cornerRadius(5)
+              
             }
             .navigationBarTitle("TeamX")
+    
         }
     }
 }

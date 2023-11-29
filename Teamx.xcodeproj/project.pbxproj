@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		436E7E722B17C16900371B9E /* CoachView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 436E7E712B17C16900371B9E /* CoachView.swift */; };
+		436E7E742B17E01C00371B9E /* WeatherHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 436E7E732B17E01C00371B9E /* WeatherHelper.swift */; };
+		436E7E762B17E03200371B9E /* Weather.swift in Sources */ = {isa = PBXBuildFile; fileRef = 436E7E752B17E03200371B9E /* Weather.swift */; };
 		43C24FFC2B0DDFAB00C3139E /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 43C24FFB2B0DDFAB00C3139E /* FirebaseAnalytics */; };
 		43C24FFE2B0DDFAB00C3139E /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 43C24FFD2B0DDFAB00C3139E /* FirebaseAuth */; };
 		43C250002B0DDFAB00C3139E /* FirebaseAuthCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 43C24FFF2B0DDFAB00C3139E /* FirebaseAuthCombine-Community */; };
@@ -47,14 +49,16 @@
 		43D82CE12B0515D90032E0CA /* PracticeSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43D82CE02B0515D90032E0CA /* PracticeSession.swift */; };
 		43D82CE32B0515E40032E0CA /* Team.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43D82CE22B0515E40032E0CA /* Team.swift */; };
 		43D82CE52B0515FA0032E0CA /* Club.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43D82CE42B0515FA0032E0CA /* Club.swift */; };
-		43D82D1E2B051BA60032E0CA /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 43D82D1D2B051BA00032E0CA /* GoogleService-Info.plist */; };
 		43D82D212B051CF30032E0CA /* FireDBHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43D82D202B051CF30032E0CA /* FireDBHelper.swift */; };
 		43D82D262B0523630032E0CA /* JoinClubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43D82D252B0523620032E0CA /* JoinClubView.swift */; };
 		43D82D282B0523940032E0CA /* MakeAClubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43D82D272B0523940032E0CA /* MakeAClubView.swift */; };
+		FCC2BACD2B217917005C15CA /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FCC2BACC2B217917005C15CA /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		436E7E712B17C16900371B9E /* CoachView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoachView.swift; sourceTree = "<group>"; };
+		436E7E732B17E01C00371B9E /* WeatherHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherHelper.swift; sourceTree = "<group>"; };
+		436E7E752B17E03200371B9E /* Weather.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Weather.swift; sourceTree = "<group>"; };
 		43C250212B0DE14200C3139E /* MakeAPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakeAPlayerView.swift; sourceTree = "<group>"; };
 		43C250232B0DE15C00C3139E /* CreateACoachView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateACoachView.swift; sourceTree = "<group>"; };
 		43C250252B0DE17E00C3139E /* CreatePracticeSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatePracticeSession.swift; sourceTree = "<group>"; };
@@ -77,10 +81,10 @@
 		43D82CE02B0515D90032E0CA /* PracticeSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeSession.swift; sourceTree = "<group>"; };
 		43D82CE22B0515E40032E0CA /* Team.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Team.swift; sourceTree = "<group>"; };
 		43D82CE42B0515FA0032E0CA /* Club.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Club.swift; sourceTree = "<group>"; };
-		43D82D1D2B051BA00032E0CA /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		43D82D202B051CF30032E0CA /* FireDBHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireDBHelper.swift; sourceTree = "<group>"; };
 		43D82D252B0523620032E0CA /* JoinClubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinClubView.swift; sourceTree = "<group>"; };
 		43D82D272B0523940032E0CA /* MakeAClubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakeAClubView.swift; sourceTree = "<group>"; };
+		FCC2BACC2B217917005C15CA /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -132,9 +136,9 @@
 		43D82CC62AFC256B0032E0CA /* Teamx */ = {
 			isa = PBXGroup;
 			children = (
+				FCC2BACC2B217917005C15CA /* GoogleService-Info.plist */,
 				43D82D242B0523480032E0CA /* Views */,
 				43D82D1F2B051CC70032E0CA /* Helpers */,
-				43D82D1D2B051BA00032E0CA /* GoogleService-Info.plist */,
 				43D82CDB2B05159C0032E0CA /* model */,
 				43D82CC72AFC256B0032E0CA /* TeamxApp.swift */,
 				43D82CCB2AFC25720032E0CA /* Assets.xcassets */,
@@ -160,6 +164,7 @@
 				43D82CE02B0515D90032E0CA /* PracticeSession.swift */,
 				43D82CE22B0515E40032E0CA /* Team.swift */,
 				43D82CE42B0515FA0032E0CA /* Club.swift */,
+				436E7E752B17E03200371B9E /* Weather.swift */,
 			);
 			path = model;
 			sourceTree = "<group>";
@@ -170,6 +175,7 @@
 				43D82D202B051CF30032E0CA /* FireDBHelper.swift */,
 				43C250312B0DE22200C3139E /* LocationHelper.swift */,
 				43C250352B0E078600C3139E /* AuthenticationHelper.swift */,
+				436E7E732B17E01C00371B9E /* WeatherHelper.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -277,8 +283,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				43D82CCF2AFC25720032E0CA /* Preview Assets.xcassets in Resources */,
-				43D82D1E2B051BA60032E0CA /* GoogleService-Info.plist in Resources */,
 				43D82CCC2AFC25720032E0CA /* Assets.xcassets in Resources */,
+				FCC2BACD2B217917005C15CA /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -289,6 +295,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				436E7E742B17E01C00371B9E /* WeatherHelper.swift in Sources */,
 				43C250322B0DE22200C3139E /* LocationHelper.swift in Sources */,
 				43D82CE52B0515FA0032E0CA /* Club.swift in Sources */,
 				43C250222B0DE14200C3139E /* MakeAPlayerView.swift in Sources */,
@@ -304,6 +311,7 @@
 				43D82D212B051CF30032E0CA /* FireDBHelper.swift in Sources */,
 				43C250262B0DE17E00C3139E /* CreatePracticeSession.swift in Sources */,
 				43D82CE32B0515E40032E0CA /* Team.swift in Sources */,
+				436E7E762B17E03200371B9E /* Weather.swift in Sources */,
 				436E7E722B17C16900371B9E /* CoachView.swift in Sources */,
 				43C250242B0DE15C00C3139E /* CreateACoachView.swift in Sources */,
 				43D82CDD2B0515BA0032E0CA /* Player.swift in Sources */,
@@ -442,6 +450,8 @@
 				DEVELOPMENT_TEAM = 25RK7NWU6X;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "App \"TeamX\" wants to access location to provide optimal functionalitie";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "App \"TeamX\" wants to access foreground location to present interactive functionalities using locations";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -471,6 +481,8 @@
 				DEVELOPMENT_TEAM = 25RK7NWU6X;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "App \"TeamX\" wants to access location to provide optimal functionalitie";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "App \"TeamX\" wants to access foreground location to present interactive functionalities using locations";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

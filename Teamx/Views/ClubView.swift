@@ -8,8 +8,30 @@
 import SwiftUI
 
 struct ClubView: View {
+    
+    @EnvironmentObject var dbHelper: FireDBHelper
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        
+        VStack{
+            ForEach(self.dbHelper.clubList.enumerated().map({$0}), id: \.element.self){
+              index, list in
+                List{
+                    VStack{
+                        Text("Club Code:\(list.code)")
+                            .foregroundColor(.red)
+                        Text("Player Name:\(list.name)")
+                    }
+                }//List
+            }//ForEach
+        }//VStack
+        .onAppear(){
+            
+            self.dbHelper.retrieveAllClubs()
+        }
+        .navigationTitle("Clubs")
+        .navigationBarTitleDisplayMode(.inline)
+        
     }
 }
 
