@@ -12,6 +12,10 @@ import FirebaseFirestore
 @main
 struct TeamX: App {
     let fireDBHelper : FireDBHelper
+    @ObservedObject var fetcher = WeatherHelper()
+    @ObservedObject var locationHelper = LocationHelper()
+
+
     
     init() {
         FirebaseApp.configure()
@@ -20,7 +24,10 @@ struct TeamX: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView().environmentObject(fireDBHelper)
+            ContentView()
+                .environmentObject(fireDBHelper)
+                .environmentObject(locationHelper)
+                .environmentObject(fetcher)
         }
     }
 }
