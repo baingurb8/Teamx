@@ -15,6 +15,8 @@ struct LoginView: View {
     @State private var password = ""
     @State private var userDetails: [String: Any]?
     @State private var isLoggedIn = false
+    @State private var shouldNavigate = false
+
 
     var body: some View {
         NavigationView {
@@ -28,7 +30,7 @@ struct LoginView: View {
                     .padding()
                 
                 Button(action: {
-                    login() // Call the login function when the button is tapped
+                    login() 
                 }) {
                     Text("Login")
                         .padding()
@@ -39,14 +41,13 @@ struct LoginView: View {
                 }
                 .padding()
                 
-                // Add signup and maybe forget password
             }
             .padding()
             .navigationBarTitle("Login")
             .background(
                 NavigationLink(
                     destination: getDestinationView(),
-                    isActive: $isLoggedIn,
+                    isActive: $shouldNavigate,
                     label: { EmptyView() }
                 )
             )
@@ -66,6 +67,7 @@ struct LoginView: View {
                                 print("Logged in as: \(role)")
                                 DispatchQueue.main.async {
                                     isLoggedIn = true
+                                    shouldNavigate = true
                                 }
                             } else {
                                 print("Role not found in user details")
@@ -87,6 +89,7 @@ struct LoginView: View {
         if let role = userDetails?["role"] as? String {
             switch role {
             case "coach":
+                let coachID = userDetails?["uid"] as? String ?? ""
                 return AnyView(CoachView(userDetails: userDetails ?? [:]))
             case "player":
                 return AnyView(PlayerView(userDetails: userDetails ?? [:]))

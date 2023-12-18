@@ -2,7 +2,7 @@
 //  PlayerView.swift
 //  Teamx
 //
-//  Created by Gurbir Bains on 2023-11-22.
+//  Created by Gurbir Bains and Arshdeep Singh on 2023-11-22.
 //
 
 import SwiftUI
@@ -11,46 +11,79 @@ import CoreLocation
 
 struct PlayerView: View {
     let userDetails: [String: Any]
-    @EnvironmentObject var weatherHelper: WeatherHelper
-    @EnvironmentObject var locationHelper: LocationHelper
+    @StateObject var dbHelper = FireDBHelper.getInstance()
+    @State private var selectedClub: Club?
+    @State private var showJoinClubSheet = false
+    @State private var clubCode = ""
+    @State private var showAlert = false
     
-    @State private var currentLocation: CLLocation?
-
     var body: some View {
-        VStack {
-            Text("Welcome Player")
-                .font(.title)
-                .padding()
-            
-            Text("Player Name: \(userDetails["firstName"] as? String ?? "")")
-                .padding()
-            
-            if let weatherInfo = weatherHelper.weatherInfo { // Check if weatherInfo is available
-                Text("Location: \(weatherInfo.cityName), \(weatherInfo.country)")
-                    .font(.headline)
-                Text(String(format: "Temperature: %.2f°C", weatherInfo.tempC))
-                Text(String(format: "Feels Like: %.2f°C", weatherInfo.feelsLikeC))
-                Text("Condition: \(weatherInfo.condition)")
-                Text("Wind: \(weatherInfo.windDir), \(String(format: "%.2f KPH", weatherInfo.windKph))")
-                Text("Humidity: \(weatherInfo.humidity)%")
+        NavigationView {
+            VStack {
+                Text("Welcome, Player!")
+                
+                List {
+                    ForEach(dbHelper.clubList) { club in
+                        Button(action: {
+                            selectedClub = club
+                        }) {
+                            Text(club.name)
+                        }
+                    }
+                }
+                
+                NavigationLink(destination: selectedClub.map { TeamView(club: $0) }) {
+                    Text("View Teams")
+                }
+                
+                Button("Join a Club") {
+                    showJoinClubSheet.toggle()
+                }
+            }
+            .sheet(isPresented: $showJoinClubSheet) {
+                VStack {
+                    TextField("Enter Club Code", text: $clubCode)
+                        .padding()
+                    
+                    Button("Join") {
+                        joinClub()
+                    }
+                    .padding()
+                }
+            }
+            .alert(isPresented: $showAlert) {Alert(title: Text("Join Club Failed"), message: Text("Club not found. Please enter a valid code."), dismissButton: .default(Text("OK")))
+            }
+            .onAppear {
+                retrievePlayerClubs()
+            }
+        }
+    }
+    
+    func retrievePlayerClubs() {
+        if let playerID = userDetails["uid"] as? String {
+            dbHelper.retrieveClubsForPlayer(playerID: playerID) { clubs in
+                DispatchQueue.main.async {
+                    self.dbHelper.clubList = clubs
+                }
+            }
+        }
+    }
+    
+    func joinClub() {
+        let playerID = userDetails["uid"] as? String ?? ""
+        
+        dbHelper.joinClub(with: clubCode, playerID: playerID) { success in
+            if success {
+                retrievePlayerClubs()
+                showJoinClubSheet.toggle()
             } else {
-                Text("Fetching weather information...")
-                    .foregroundColor(.gray)
-            }
-        }
-        .onAppear {
-            if let location = locationHelper.currentLocation {
-                weatherHelper.fetchDataFromAPI(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
-            }
-        }
-        .onChange(of: locationHelper.currentLocation) { newLocation in
-            if let location = newLocation {
-                weatherHelper.fetchDataFromAPI(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
-                self.currentLocation = location
+                showAlert.toggle()
             }
         }
     }
 }
+    
+
 
 struct PlayerView_Previews: PreviewProvider {
     static var previews: some View {

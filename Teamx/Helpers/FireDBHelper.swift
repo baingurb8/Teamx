@@ -11,8 +11,8 @@ import FirebaseFirestore
 class FireDBHelper : ObservableObject{
     
     @Published var clubList = [Club]()
-    @Published var teamList = [Team]()
-
+    @Published var teamList = [TeamList]()
+    @Published var playersList = [Player]()
     
     private let db : Firestore
     
@@ -98,7 +98,268 @@ class FireDBHelper : ObservableObject{
             }
         }
     
-    func insertTeam(team: Team) {
+    func retrieveClubsForPlayer(playerID: String, completion: @escaping ([Club]) -> Void) {
+        db.collection(PLAYERS_COLLECTION)
+            .whereField("uid", isEqualTo: playerID)
+            .getDocuments { [self] snapshot, error in
+                if let error = error {
+                    print("Error fetching player document: \(error.localizedDescription)")
+                    completion([])
+                    return
+                }
+
+                guard let playerDocument = snapshot?.documents.first else {
+                    print("Player document not found")
+                    completion([])
+                    return
+                }
+
+                if let clubIDs = playerDocument.data()["clubs"] as? [String] {
+                    var clubs = [Club]()
+                    let dispatchGroup = DispatchGroup()
+
+                    for clubID in clubIDs {
+                        dispatchGroup.enter()
+
+                        self.db.collection(COLLECTION_NAME).document(clubID).getDocument { document, error in
+                            defer {
+                                dispatchGroup.leave()
+                            }
+
+                            if let error = error {
+                                print("Error fetching club with ID \(clubID): \(error.localizedDescription)")
+                                return
+                            }
+
+                            if let document = document, document.exists {
+                                if let club = document.data().flatMap({ $0 as? [String: Any] }) {
+                                    if let clubObject = Club(dictionary: club) {
+                                        clubs.append(clubObject)
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    dispatchGroup.notify(queue: .main) {
+                        completion(clubs)
+                    }
+                } else {
+                    completion([])
+                }
+            }
+    }
+
+    
+    func createClubForCoach(coachID: String, club: Club, completion: @escaping (Club?) -> Void) {
+        
+        do {
+            var updatedClub = club
+
+            let clubRef = try db.collection(COLLECTION_NAME).addDocument(from: updatedClub)
+            let clubID = clubRef.documentID
+
+            updatedClub.id = clubID
+
+            self.db.collection(COACHES_COLLECTION).whereField("uid", isEqualTo: coachID).getDocuments { snapshot, error in
+                if let error = error {
+                    print("Error fetching coach document: \(error.localizedDescription)")
+                    completion(nil)
+                    return
+                }
+
+                guard let coachDocument = snapshot?.documents.first else {
+                    print("Coach document not found")
+                    completion(nil)
+                    return
+                }
+
+                let clubCode = updatedClub.code
+                coachDocument.reference.updateData(["clubIDs": FieldValue.arrayUnion([clubCode])]) { error in
+                    if let error = error {
+                        print("Error updating coach document: \(error.localizedDescription)")
+                        completion(nil)
+                    } else {
+                        completion(updatedClub)
+                    }
+                }
+            }
+        } catch let error {
+            print("Error creating club for coach: \(error.localizedDescription)")
+            completion(nil)
+        }
+    }
+
+
+    func retrieveClubsForCoach(coachID: String, completion: @escaping ([Club]) -> Void) {
+        db.collection(COACHES_COLLECTION)
+            .whereField("uid", isEqualTo: coachID)
+            .getDocuments { snapshot, error in
+                if let error = error {
+                    print("Error fetching coach document: \(error.localizedDescription)")
+                    completion([])
+                    return
+                }
+
+                guard let coachDocument = snapshot?.documents.first else {
+                    print("Coach document not found")
+                    completion([])
+                    return
+                }
+
+                if let clubIDs = coachDocument.data()["clubIDs"] as? [String] {
+                    var clubs = [Club]()
+                    let dispatchGroup = DispatchGroup()
+
+                    for clubID in clubIDs {
+                        dispatchGroup.enter()
+
+                        self.db.collection("Clubs").whereField("code", isEqualTo: clubID).getDocuments { clubDocuments, clubError in
+                            defer {
+                                dispatchGroup.leave()
+                            }
+
+                            if let clubError = clubError {
+                                print("Error fetching club with ID \(clubID): \(clubError.localizedDescription)")
+                                return
+                            }
+
+                            clubDocuments?.documents.forEach { clubDocument in
+                                if let clubObject = try? clubDocument.data(as: Club.self) {
+                                    clubs.append(clubObject)
+                                }
+                            }
+                        }
+                    }
+
+                    dispatchGroup.notify(queue: .main) {
+                        completion(clubs)
+                    }
+                } else {
+                    print("No club IDs found for the coach")
+                    completion([])
+                }
+            }
+    }
+
+
+
+
+
+    
+    func createTeamForClub(clubCode: String, team: Team, completion: @escaping (String?) -> Void) {
+        do {
+            var updatedTeam = team
+
+            let teamRef = try db.collection("Teams").addDocument(from: updatedTeam)
+            let teamID = teamRef.documentID
+
+            self.db.collection("Clubs").whereField("code", isEqualTo: clubCode).getDocuments { snapshot, error in
+                if let error = error {
+                    print("Error fetching club: \(error.localizedDescription)")
+                    completion(nil)
+                    return
+                }
+
+                guard let clubDocument = snapshot?.documents.first else {
+                    print("Club not found")
+                    completion(nil)
+                    return
+                }
+
+                clubDocument.reference.updateData([
+                    "teams": FieldValue.arrayUnion([teamID])
+                ]) { error in
+                    if let error = error {
+                        print("Error updating club document: \(error.localizedDescription)")
+                        completion(nil)
+                    } else {
+                        completion(teamID)
+                    }
+                }
+            }
+        } catch let error {
+            print("Error creating team for club: \(error.localizedDescription)")
+            completion(nil)
+        }
+    }
+
+
+
+    func retrieveTeamsForClub(clubID: String, completion: @escaping ([Team]) -> Void) {
+        self.db.collection("Clubs").document(clubID).getDocument { document, error in
+            if let error = error {
+                print("Error fetching club document: \(error.localizedDescription)")
+                completion([])
+                return
+            }
+
+            guard let clubDocument = document, clubDocument.exists else {
+                print("Club document not found")
+                completion([])
+                return
+            }
+
+            if let teamIDs = clubDocument.data()?["teams"] as? [String] {
+                var teams = [Team]()
+                let dispatchGroup = DispatchGroup()
+
+                for teamID in teamIDs {
+                    dispatchGroup.enter()
+
+                    self.db.collection("Teams").document(teamID).getDocument { document, error in
+                        defer {
+                            dispatchGroup.leave()
+                        }
+
+                        if let error = error {
+                            print("Error fetching team with ID \(teamID): \(error.localizedDescription)")
+                            return
+                        }
+
+                        if let document = document, document.exists {
+                            if let teamData = document.data() {
+                                let team = Team(
+                                    name: teamData["name"] as? String ?? ""
+                                )
+                                teams.append(team)
+                            }
+                        }
+                    }
+                }
+
+                dispatchGroup.notify(queue: .main) {
+                    completion(teams)
+                }
+            } else {
+                completion([])
+            }
+        }
+    }
+
+
+    
+    
+    func retrieveAllPlayers(){
+        db.collection(PLAYERS_COLLECTION).order(by: "firstName", descending: false).addSnapshotListener{
+            snapshot, error in
+            guard let snapshot = snapshot else {
+                print("Unable to retrieve players: \(error?.localizedDescription ?? "Unknown error")")
+                return
+            }
+            self.playersList = snapshot.documents.compactMap{ info in
+                do {
+                    return try info.data(as: Player.self)
+                } catch {
+                    print("Error decoding team: \(error.localizedDescription)")
+                    return nil
+                }
+            }
+                    
+        }
+    }
+    
+    func insertTeam(team: Player) {
             do {
                 try self.db.collection(TEAMS_COLLECTION).addDocument(from: team)
             } catch let err as NSError {
@@ -107,7 +368,7 @@ class FireDBHelper : ObservableObject{
         }
     
     func retrieveAllTeams() {
-        db.collection(TEAMS_COLLECTION).order(by: "name", descending: false).addSnapshotListener { snapshot, error in
+        db.collection(TEAMS_COLLECTION).addSnapshotListener { snapshot, error in
             guard let snapshot = snapshot else {
                 print("Unable to retrieve teams: \(error?.localizedDescription ?? "Unknown error")")
                 return
@@ -115,20 +376,20 @@ class FireDBHelper : ObservableObject{
             
             self.teamList = snapshot.documents.compactMap { document in
                 do {
-                    return try document.data(as: Team.self)
+                    return try document.data(as: TeamList.self)
                 } catch {
                     print("Error decoding team: \(error.localizedDescription)")
                     return nil
                 }
             }
         }
+        
     }
 
 
     
     func insertClub(stud : Club){
             do{
-                // Generate a unique code for the club
                 let uniqueCode = Club.generateUniqueCode()
                 
                 var clubWithCode = stud
@@ -138,13 +399,75 @@ class FireDBHelper : ObservableObject{
                 var clubWithCreationDate = clubWithCode
                 clubWithCreationDate.creationDate = currentDate
                 
-                // Insert the club into the database
                 try self.db.collection(COLLECTION_NAME).addDocument(from: clubWithCreationDate)
                 
             }catch let err as NSError{
                 print(#function, "Unable to insert : \(err)")
             }
         }
+    
+    func joinClub(with code: String, playerID: String, completion: @escaping (Bool) -> Void) {
+        db.collection(COLLECTION_NAME)
+            .whereField("code", isEqualTo: code)
+            .getDocuments { [self] snapshot, error in
+                if let error = error {
+                    print("Error fetching club: \(error.localizedDescription)")
+                    completion(false)
+                    return
+                }
+
+                guard let clubDocument = snapshot?.documents.first else {
+                    print("Club not found")
+                    completion(false)
+                    return
+                }
+
+                let clubID = clubDocument.documentID
+
+                let playerData: [String: Any] = ["id": playerID]
+                db.collection(COLLECTION_NAME).document(clubID).updateData([
+                    "players": FieldValue.arrayUnion([playerData])
+                ]) { [self] error in
+                    if let error = error {
+                        print("Error updating club document: \(error.localizedDescription)")
+                        completion(false)
+                        return
+                    }
+
+                    self.db.collection(PLAYERS_COLLECTION)
+                        .whereField("uid", isEqualTo: playerID)
+                        .getDocuments { snapshot, error in
+                            if let error = error {
+                                print("Error fetching player document: \(error.localizedDescription)")
+                                completion(false)
+                                return
+                            }
+
+                            guard let playerDocument = snapshot?.documents.first else {
+                                print("Player document not found")
+                                completion(false)
+                                return
+                            }
+
+                            let playerRef = playerDocument.reference
+                            playerRef.updateData([
+                                "clubs": FieldValue.arrayUnion([clubID])
+                            ]) { error in
+                                if let error = error {
+                                    print("Error updating player document: \(error.localizedDescription)")
+                                    completion(false)
+                                    return
+                                }
+                                completion(true)
+                            }
+                        }
+                }
+            }
+    }
+
+
+
+
     
     func deleteClub(docIDtoDelete : String){
         self.db
@@ -249,4 +572,17 @@ class FireDBHelper : ObservableObject{
             }
     }
     
+}
+
+extension FireDBHelper {
+    func updatePlayerAttendance(player: Player) {
+        guard let id = player.id else { return }
+        db.collection(PLAYERS_COLLECTION).document(id).updateData(["attendanceCount": player.attendanceCount]) { error in
+            if let error = error {
+                print("Error updating attendance: \(error)")
+            } else {
+                print("Attendance updated successfully")
+            }
+        }
+    }
 }

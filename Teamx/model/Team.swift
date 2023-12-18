@@ -7,7 +7,7 @@
 import Foundation
 import FirebaseFirestoreSwift
 
-struct Team: Codable, Hashable {
+struct Team: Codable, Hashable, Identifiable {
     @DocumentID var id: String? = UUID().uuidString
     var name: String = ""
     var players: [Player] = []

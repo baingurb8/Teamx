@@ -8,11 +8,12 @@
 import SwiftUI
 
 struct MakeAClubView: View {
+    let userDetails: [String: Any]
     @EnvironmentObject var dbHelper: FireDBHelper
     @Environment(\.dismiss) var dismiss
-
+    
     @State private var clubName: String = ""
-
+    
     var body: some View {
         VStack {
             Form {
@@ -20,10 +21,9 @@ struct MakeAClubView: View {
                     .font(.title2)
                     .textFieldStyle(.roundedBorder)
             }
-
+            
             Section {
                 Button(action: {
-                    // Perform action to save the club to Firestore
                     self.addClub()
                 }) {
                     Text("Save Club")
@@ -41,18 +41,26 @@ struct MakeAClubView: View {
         .navigationBarTitle("Make a Club")
         .navigationBarTitleDisplayMode(.inline)
     }
-
+    
     private func addClub() {
+        guard let coachID = userDetails["uid"] as? String else {
+            return
+        }
         
         let newClub = Club(name: clubName)
-        dbHelper.insertClub(stud: newClub)
-        dismiss()
+        dbHelper.createClubForCoach(coachID: coachID, club: newClub) { updatedClub in
+            if let updatedClub = updatedClub {
+                print("Club created with ID: \(updatedClub.code )")
+                self.dismiss()
+            } else {
+                print("Failed to create the club")
+            }
+        }
     }
 }
 
-
 struct MakeAClubView_Previews: PreviewProvider {
     static var previews: some View {
-        MakeAClubView()
+        MakeAClubView(userDetails: [:])
     }
 }

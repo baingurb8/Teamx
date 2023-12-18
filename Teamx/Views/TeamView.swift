@@ -8,13 +8,16 @@
 import SwiftUI
 
 struct TeamView: View {
+    let club: Club
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        Text("Teams for \(club.name)") 
     }
 }
 
 struct TeamView_Previews: PreviewProvider {
     static var previews: some View {
-        TeamView()
+        let sampleClub = Club(name: "Sample Club") 
+        return TeamView(club: sampleClub)
     }
 }

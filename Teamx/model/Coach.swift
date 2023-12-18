@@ -16,6 +16,7 @@ struct Coach: Codable, Hashable {
     var role: String = ""
     var uid: String = "" 
     var teams: [Team] = []
+    var clubIDs: [String] = [] // Array to hold club IDs
 
     init() {
         self.firstName = "NA"
